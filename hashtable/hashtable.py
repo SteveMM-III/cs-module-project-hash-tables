@@ -21,9 +21,14 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        self.capacity = capacity
-        self.total    = 0
-        self.store    = [ None ] * capacity
+        if capacity < MIN_CAPACITY:
+            cap = MIN_CAPACITY
+        else:
+            cap = capacity
+        
+        self.capacity     = cap
+        self.stored_items = 0
+        self.store        = [ None ] * cap
 
 
     def get_num_slots(self):
@@ -45,7 +50,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.stored_items / self.capacity
 
 
     def fnv1(self, key):
@@ -103,8 +108,28 @@ class HashTable:
 
         Implement this.
         """
-        self.store[ self.hash_index( key ) ] = value
+        # self.store[ self.hash_index( key ) ] = value
+        # self.stored_items += 1
 
+        ndx = self.hash_index( key )
+
+        if self.store[ ndx ] is None:
+            self.store[ ndx ] = HashTableEntry( key, value )
+            self.stored_items += 1
+        else:
+            existing = self.store[ ndx ]
+
+            while existing.next and existing.key != key:
+                existing = existing.next
+
+            if existing.key == key:
+                existing.value = value
+            else:
+                existing.next = HashTableEntry( key, value )
+                self.stored_items += 1
+
+        if self.get_load_factor() > 0.7:
+            self.resize( self.capacity * 2 )
 
     def delete(self, key):
         """
@@ -114,8 +139,35 @@ class HashTable:
 
         Implement this.
         """
-        self.store[ self.hash_index( key ) ] = None
+        # self.store[ self.hash_index( key ) ] = None
+        # self.stored_items -= 1
 
+        ndx  = self.hash_index( key )
+        itm  = self.store[ ndx ]
+        prev = None
+        
+        if itm.key == key:
+            if itm.next:
+                self.store[ ndx ] = itm.next
+            else:
+                self.store[ ndx ] = None
+        else:
+            while itm is not None:
+                if itm.key == key:
+                    break
+                prev = itm
+                itm  = itm.next
+            
+            if itm is None:
+                print( f'Key "{key}" not found!')
+            else:
+                prev.next = itm.next
+
+
+        if self.get_load_factor() < 0.2 and self.capacity > MIN_CAPACITY:
+            new_size = self.capacity / 2
+
+            self.resize( new_size )
 
     def get(self, key):
         """
@@ -125,7 +177,16 @@ class HashTable:
 
         Implement this.
         """
-        return self.store[ self.hash_index( key ) ]
+        ndx = self.hash_index(key)
+        itm = self.store[ ndx ]
+
+        while itm:
+            if itm.key == key:
+                return itm.value
+            else:
+                itm = itm.next
+                
+        return None
 
 
     def resize(self, new_capacity):
@@ -135,8 +196,22 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        if new_capacity < MIN_CAPACITY:
+            cap = MIN_CAPACITY
+        else: 
+            cap = new_capacity
 
+        self.capacity = cap
+        old_store     = self.store
+        self.store    = [ None ] * cap
+        
+        for ndx in range( len( old_store ) ):
+            itm = old_store[ ndx ]
+            while itm: 
+                self.put( itm.key, itm.value )
+                itm = itm.next
+        
+        old_store = None
 
 
 if __name__ == "__main__":
