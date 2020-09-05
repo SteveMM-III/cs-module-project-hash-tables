@@ -132,6 +132,7 @@ class HashTable:
             self.resize( self.capacity * 2 )
 
     def delete(self, key):
+        import math
         """
         Remove the value stored with the given key.
 
@@ -165,7 +166,7 @@ class HashTable:
 
 
         if self.get_load_factor() < 0.2 and self.capacity > MIN_CAPACITY:
-            new_size = self.capacity / 2
+            new_size = math.floor( self.capacity / 2 )
 
             self.resize( new_size )
 
@@ -185,7 +186,7 @@ class HashTable:
                 return itm.value
             else:
                 itm = itm.next
-                
+
         return None
 
 
