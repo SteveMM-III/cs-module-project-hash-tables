@@ -1,6 +1,19 @@
+import re
+
 def word_count(s):
     # Your code here
+    d = {}
 
+    # regex reference: https://docs.python.org/3/library/re.html
+    filtered = re.sub( r"[^\w'\s]", '', s )
+
+    for word in filtered.lower().split():
+        if word not in d.keys():
+            d[word] = 1
+        else:
+            d[word] += 1
+    
+    return d
 
 
 if __name__ == "__main__":

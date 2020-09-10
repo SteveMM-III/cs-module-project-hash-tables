@@ -108,9 +108,6 @@ class HashTable:
 
         Implement this.
         """
-        # self.store[ self.hash_index( key ) ] = value
-        # self.stored_items += 1
-
         ndx = self.hash_index( key )
 
         if self.store[ ndx ] is None:
@@ -140,9 +137,6 @@ class HashTable:
 
         Implement this.
         """
-        # self.store[ self.hash_index( key ) ] = None
-        # self.stored_items -= 1
-
         ndx  = self.hash_index( key )
         itm  = self.store[ ndx ]
         prev = None
