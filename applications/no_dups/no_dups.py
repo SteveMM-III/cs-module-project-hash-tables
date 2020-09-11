@@ -1,6 +1,12 @@
 def no_dups(s):
     # Your code here
+    
+    # create a new dict spliting the string which
+    # removes duplicates and convert to list
+    arr = list( dict.fromkeys( s.split() ) )
 
+    # return the space separated list values
+    return " ".join( arr )
 
 
 if __name__ == "__main__":
